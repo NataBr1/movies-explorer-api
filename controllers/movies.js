@@ -5,7 +5,7 @@ const AccessDeniedError = require('../errors/access_denied_err');
 
 // возвращает все сохранённые текущим  пользователем фильмы
 const getMovies = (req, res, next) => {
-  Movie.find({})
+  Movie.find({ owner: req.user._id })
     .then((movie) => res.status(200).send(movie))
     .catch(next);
 };
@@ -31,10 +31,8 @@ const deleteMovies = (req, res, next) => {
     })
     .then((movie) => {
       if (String(movie.owner) === req.user._id) {
-        Movie.findByIdAndRemove(req.params.movieId).then(() => res.status(200).send(movie));
-      } else {
-        throw new AccessDeniedError('Нет прав на удаление этого фильма');
-      }
+        return Movie.findByIdAndRemove(req.params.movieId).then(() => res.status(200).send(movie));
+      } throw new AccessDeniedError('Нет прав на удаление этого фильма');
     })
     .catch(next);
 };

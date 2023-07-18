@@ -90,9 +90,9 @@ const getCurrentUser = (req, res, next) => {
 
 // обновляет информацию о пользователе
 const updateProfile = (req, res, next) => {
-  const { name, about } = req.body;
+  const { email, name } = req.body;
 
-  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
+  User.findByIdAndUpdate(req.user._id, { email, name }, { new: true, runValidators: true })
     .orFail(() => {
       throw new NotFoundError('Запрашиваемый пользователь не найден');
     })
@@ -102,6 +102,8 @@ const updateProfile = (req, res, next) => {
         next(new BadRequestError('Переданы некорректные данные'));
       } else if (err.message === 'Not Found') {
         next(new NotFoundError('Запрашиваемый пользователь не найден'));
+      } else if (err.code === 11000) {
+        next(new DuplicateError('Пользователь с таким email уже существует'));
       } else {
         next(err);
       }
