@@ -45,6 +45,7 @@ const login = (req, res, next) => {
                 expiresIn: '7d',
                 httpOnly: true,
                 sameSite: true,
+                secure: true,
               })
               .send({ jwt });
           } else {
