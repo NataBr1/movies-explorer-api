@@ -44,7 +44,7 @@ const login = (req, res, next) => {
               .cookie('jwt', jwt, {
                 expiresIn: '7d',
                 httpOnly: true,
-                sameSite: true,
+                sameSite: 'none',
                 secure: true,
               })
               .send({ jwt });
